@@ -1,16 +1,18 @@
+#TODO: dont allow rules to rollover to the next generation
 require './automata'
 
 class RuleEngine
 
-  SEED_SIZE = 500
+  SEED_SIZE = 60
   SELECTION_FACTOR = 2
-  GENERATIONS = 100
+  GENERATIONS = 1000
   TEST_ITERATIONS = 100
 
   INPUT_CHECK  = lambda { |initial_state| initial_state.count('1') > initial_state.size/2 }
   OUTPUT_CHECKS = { true  => lambda { |final_state| final_state.count('X') == final_state.size },
                     false => lambda { |final_state| final_state.count(' ') == final_state.size } }
   OUTPUT_SET_CHECK = lambda { |output_set, size| output_set.all? { |o| ['X' * size, ' ' * size].include? o } }
+  RULE_CHECK = lambda { |rule| rule[0] == '1' && rule[-1] == '0' }
 
   attr_reader :size, :reach, :population
 
@@ -49,6 +51,12 @@ private
 
   def score_rule(rule)
     output_set, results = [], []
+
+    # Filter binary flippers
+    if RULE_CHECK.call(rule)
+      return Rational(0,1)
+    end
+
     TEST_ITERATIONS.times do |i|
       input = generate_random_input
       input_check = INPUT_CHECK.call(input)
@@ -65,9 +73,9 @@ private
       # puts [input, output, input_check, results.last].inspect
     end
     
-    # Remove cheaters
+    # Filter binary fillers
     if OUTPUT_SET_CHECK.call(output_set, @size)
-      Rational(0,1)
+      Rational(1,1)
     else
       Rational(results.count(true), TEST_ITERATIONS)
     end

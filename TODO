@@ -1,0 +1,75 @@
+TODO
+- gemify
+- DSL support
+
+# DSL Defenition
+
+describe_ga:
+
+test_group
+  - rule
+  - test_runs
+
+current_run
+  - initial_state
+  - final_state
+  - states
+  - [name]_probe
+    - function
+    - result
+
+rule_distribution
+input_distribution
+seed_size
+selection_factor
+generations
+test_iterations
+set_input_probe
+set_output_probe
+set_scoring_function
+set_fitness_function
+
+describe_rule:
+
+mutation_factor
+slice_size
+offspring
+
+# Usage
+
+describe_ga do |g|
+  g.rule_distribution = :even
+  g.input_distribution = :gaussian
+  g.seed_size = 60
+  g.selection_factor = 2
+  g.generations = 1000
+  g.test_iterations = 100
+  g.set_rule_probe lambda { rule[0] != '1' || rule[-1] != '0' }
+  g.set_input_probe lambda { initial_state.count('1') > initial_state.size/2 }
+  g.set_output_probe lambda { output_check(input_probe.result, final_state) }
+  g.set_scoring_function lambda { scoring_function }
+  g.set_fitness_function g.scoring_function
+end
+
+describe_rule do |r|
+  r.mutation_factor = 0.1
+  r.slice_size = 1
+  r.offspring = 1
+end
+
+run
+
+private
+
+def output_check(input_result, final_state)
+  case input_result
+  when true 
+    final_state.count('X') == output.size
+  else
+    final_state.count(' ') == output.size
+  end
+end
+
+def scoring_function
+  (rule_probe.result && output_probe_result) ? 1 : 0
+end
