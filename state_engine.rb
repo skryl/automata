@@ -40,10 +40,18 @@ private
   
 # Grid construction
 
+  # 1.9 only
+  # def construct_cell_grid(state)
+    # connect_neighbor_cells!(
+    #   state.split('').map.with_index { |v, i| Cell.new(i, v) } )
+  # end
+  
   def construct_cell_grid(state)
-    connect_neighbor_cells!(
-      state.split('').map.with_index { |v, i| Cell.new(i, v) } )
+    grid = []
+    state.split('').each_with_index { |v,i| grid << Cell.new(i,v) }
+    connect_neighbor_cells!(grid)
   end
+  
 
   def connect_neighbor_cells!(cells)
     cells.each do |c|

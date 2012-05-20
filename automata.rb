@@ -1,7 +1,7 @@
 require 'forwardable'
 require 'pp'
-require 'ffi-ncurses'
-require 'pry'
+# require 'ffi-ncurses'
+# require 'pry'
 
 require './random_bit_string'
 require './many_params'
@@ -11,7 +11,7 @@ require './state_engine'
 
 class Automata
   extend  Forwardable
-  include FFI::NCurses
+  # include FFI::NCurses
   include Enumerable
   include ManyParams
   include RandomBitString::BitString
@@ -54,7 +54,6 @@ end
     @initial_state = \
       @initial_state ? RandomBitString.dehumanize(@initial_state) : @bit_string.generate
     @generation = 0
-    binding.pry
 
     return unless valid_params? 
     @cell_grid = parse(@initial_state)
