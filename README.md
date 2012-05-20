@@ -1,7 +1,5 @@
 # Automata
 
-## About
-
 Automata is a cellular automata simulator and evolution framework. The DSL
 is still under development but the engine is fairly functional.
 
